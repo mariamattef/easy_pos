@@ -17,11 +17,11 @@ class _HomePageState extends State<HomePage> {
   bool isTableInitialize = false;
   @override
   void initState() {
-    initializeTable();
+    initilizeTable();
     super.initState();
   }
 
-  void initializeTable() async {
+  void initilizeTable() async {
     var sqlHelper = GetIt.I.get<SqlHelper>();
     isTableInitialize = await sqlHelper.createTables();
     isLooding = false;
