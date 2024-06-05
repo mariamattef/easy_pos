@@ -1,4 +1,5 @@
 import 'package:easy_pos/helper/sql_helper.dart';
+import 'package:easy_pos/pages/categories.dart';
 import 'package:easy_pos/widgets/grid_view_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,33 +91,43 @@ class _HomePageState extends State<HomePage> {
               color: Color(0xfffafafa),
               child: GridView.count(
                 crossAxisCount: 2,
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
                 children: [
                   GridViewItem(
                     label: 'All Sales',
                     color: Colors.orange,
                     icon: Icons.calculate,
+                    onPrresed: () {},
                   ),
                   GridViewItem(
                     label: 'Products',
                     color: Colors.pink,
                     icon: Icons.inventory_2,
+                    onPrresed: () {},
                   ),
                   GridViewItem(
                     label: 'Clients',
                     color: Colors.blue,
                     icon: Icons.groups,
+                    onPrresed: () {},
                   ),
                   GridViewItem(
                     label: 'New Sale',
                     color: Colors.green,
                     icon: Icons.point_of_sale,
+                    onPrresed: () {},
                   ),
                   GridViewItem(
                     label: 'Categories',
                     color: Colors.yellow,
                     icon: Icons.category,
+                    onPrresed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => CategoriesPage()));
+                    },
                   ),
                 ],
               ),
