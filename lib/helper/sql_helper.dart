@@ -27,6 +27,9 @@ class SqlHelper {
   Future<bool> createTables() async {
     try {
       var batch = db!.batch();
+      batch.execute('''
+        PRAGMA foreign_keys = ON
+       ''');
       batch.execute("""
         Create table if not exists categories(
           id integer primary key,
@@ -43,8 +46,10 @@ class SqlHelper {
           price double not null,
           stock integer not null,
           isAvaliable boolean not null,
-          image blob,
-          categoryId integer not null
+          image text,
+          categoryId integer not null,
+          foreign key(categoryId) references categories (id)
+          on delete restrict
           )
           """);
 

@@ -1,5 +1,6 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/pages/categories.dart';
+import 'package:easy_pos/pages/products.dart';
 import 'package:easy_pos/widgets/grid_view_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 color: Theme.of(context).primaryColor,
-                height: MediaQuery.of(context).size.height / 3,
+                height: MediaQuery.of(context).size.height / 3.3,
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       HeaderItem('Exchanged Rate ', '1 USD = 50 EGP'),
                       HeaderItem('Today\'s Sales ', '1000 EGP'),
@@ -104,7 +105,10 @@ class _HomePageState extends State<HomePage> {
                     label: 'Products',
                     color: Colors.pink,
                     icon: Icons.inventory_2,
-                    onPrresed: () {},
+                    onPrresed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => ProductsPage()));
+                    },
                   ),
                   GridViewItem(
                     label: 'Clients',
@@ -141,13 +145,13 @@ class _HomePageState extends State<HomePage> {
 
 Widget HeaderItem(String label, String value) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
+    padding: const EdgeInsets.symmetric(vertical: 5),
     child: Card(
       color: const Color(0xff216de1),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 23, horizontal: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

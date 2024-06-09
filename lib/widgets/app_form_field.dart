@@ -1,22 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppFormField extends StatelessWidget {
   final TextEditingController Controller;
   final String? Function(String?)? validator;
   final String label;
+  final List<TextInputFormatter>? formater;
+  final TextInputType? texInputType;
 
   const AppFormField(
       {required this.Controller,
       required this.validator,
       required this.label,
+      this.formater,
+      this.texInputType,
       super.key});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      inputFormatters: formater,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType: TextInputType.text,
+      keyboardType: texInputType,
       controller: Controller,
       validator: validator,
       decoration: InputDecoration(

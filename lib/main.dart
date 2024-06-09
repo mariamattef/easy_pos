@@ -1,5 +1,6 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/pages/home.dart';
+import 'package:easy_pos/pages/test.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 

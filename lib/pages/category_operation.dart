@@ -2,12 +2,12 @@ import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/models/category_model.dart';
 import 'package:easy_pos/widgets/app_elevated_button.dart';
 import 'package:easy_pos/widgets/app_form_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class CategoriesOpePage extends StatefulWidget {
-  const CategoriesOpePage({super.key});
+  final CategoryModel? categoryModel;
+  const CategoriesOpePage({this.categoryModel, super.key});
 
   @override
   State<CategoriesOpePage> createState() => _CategoriesOpePageState();
@@ -16,13 +16,20 @@ class CategoriesOpePage extends StatefulWidget {
 class _CategoriesOpePageState extends State<CategoriesOpePage> {
   @override
   var formKey = GlobalKey<FormState>();
-  var nameController = TextEditingController();
-  var descriptionController = TextEditingController();
+  TextEditingController? nameController;
+  TextEditingController? descriptionController;
   @override
+  void initState() {
+    nameController = TextEditingController(text: widget.categoryModel?.name);
+    descriptionController =
+        TextEditingController(text: widget.categoryModel?.description);
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New'),
+        title: Text(widget.categoryModel != null ? 'Update' : 'Add New'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -31,7 +38,7 @@ class _CategoriesOpePageState extends State<CategoriesOpePage> {
           child: Column(
             children: [
               AppFormField(
-                  Controller: nameController,
+                  Controller: nameController!,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Name is required';
@@ -43,7 +50,7 @@ class _CategoriesOpePageState extends State<CategoriesOpePage> {
                 height: 20,
               ),
               AppFormField(
-                Controller: descriptionController,
+                Controller: descriptionController!,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Description is required';
@@ -71,10 +78,23 @@ class _CategoriesOpePageState extends State<CategoriesOpePage> {
     try {
       if (formKey.currentState!.validate()) {
         var sqlHelper = GetIt.I.get<SqlHelper>();
-        await sqlHelper.db!.insert('categories', {
-          'name': nameController.text,
-          'description': descriptionController.text
-        });
+        if (widget.categoryModel != null) {
+          // Update
+          await sqlHelper.db!.update(
+              'categories',
+              {
+                'name': nameController?.text,
+                'description': descriptionController?.text
+              },
+              where: 'id =?',
+              whereArgs: [widget.categoryModel?.id]);
+        } else {
+          await sqlHelper.db!.insert('categories', {
+            'name': nameController?.text,
+            'description': descriptionController?.text
+          });
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.green,
             content: Text('Category added successfully')));
