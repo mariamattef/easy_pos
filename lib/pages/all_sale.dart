@@ -30,8 +30,8 @@ class _AllSalesState extends State<AllSales> {
       var sqlHelper = GetIt.I.get<SqlHelper>();
       var data = await sqlHelper.db!.rawQuery("""
       select O.* ,C.name as clientName,C.phone as clientPhone,C.address as clientAddress
-      from Orders O
-      inner join Clients C
+      from orders O
+      inner join clients C
       where O.clientId = C.id
       """);
 
@@ -60,7 +60,8 @@ class _AllSalesState extends State<AllSales> {
           : (orders?.isEmpty ?? false)
               ? const Center(child: Text("No Data Found"))
               : ListView(
-                  children: orders?.map((order) {
+                  children: orders?.map((OrderModel order) {
+                        print(order);
                         return Column(
                           children: [
                             const SizedBox(height: 20),

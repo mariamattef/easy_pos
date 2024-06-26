@@ -25,6 +25,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
   List<OrderItemModel> selectOrderItem = [];
   int? selectedClientId;
   TextEditingController? discountController;
+  double? totalAfterDiscount;
 
   //  ExchangeRateModel currentCurrency = Currency.USD; // Default currency is USD in App
   // ExchangeRateModel selectedCurrency = Currency.EGP;
@@ -191,21 +192,38 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                         ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: AppFormField(
-                          onChanged: (discountValue) {
-                            if ((discountController?.text.isNotEmpty ??
-                                false)) {
-                              discountValue = (discountController?.text ?? '');
-                              discount = double.parse(discountValue) / 100;
-                            } else {
-                              discount = 0.0;
-                            }
-                            setState(() {});
-                          },
-                          Controller:
-                              discountController ?? TextEditingController(),
-                          label: 'discount',
-                          texInputType: TextInputType.number,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: AppFormField(
+                                Controller: discountController ??
+                                    TextEditingController(),
+                                label: 'discount',
+                                texInputType: TextInputType.number,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  var discountValue;
+                                  if ((discountController?.text.isNotEmpty ??
+                                      false)) {
+                                    discountValue =
+                                        (discountController?.text ?? '');
+                                    discount =
+                                        double.parse(discountValue) / 100;
+
+                                    totalAfterDiscount = calculateTotalPrice -
+                                        (calculateTotalPrice * discount!);
+                                  } else {
+                                    discount = 0.0;
+                                  }
+                                  setState(() {});
+                                },
+                                child: const Text('Apply'))
+                          ],
                         ),
                       ),
                       Padding(
@@ -221,7 +239,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                               ),
                             ),
                             Text(
-                              "$calculateTotalPrice Egp ",
+                              "${totalAfterDiscount ?? calculateTotalPrice} Egp ",
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -239,7 +257,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                   onPressed: selectOrderItem.isEmpty
                       ? null
                       : () {
-                          onsetOrder();
+                          insetOrder();
                         },
                   label: 'Add Order')
             ],
@@ -249,7 +267,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
     );
   }
 
-  Future<void> onsetOrder() async {
+  Future<void> insetOrder() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
       var orderId = await sqlHelper.db!.insert('orders', {
@@ -257,6 +275,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
         'totalPrice': calculateTotalPrice,
         'discount': discount,
         'clientId': selectedClientId,
+        'createdAt': DateTime.now().toIso8601String(),
       });
 
       var batch = sqlHelper.db!.batch();
@@ -330,74 +349,61 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                                       leading: Image.network(
                                           product.image ?? 'No image'),
                                       title: Text(product.name ?? 'No Name'),
-                                      subtitle:
-                                          getOrdetItem(product.id!) == null
-                                              ? null
-                                              : Row(
-                                                  children: [
-                                                    IconButton(
-                                                      icon: const Icon(
-                                                          Icons.remove),
-                                                      onPressed: getOrdetItem(
-                                                                      product
-                                                                          .id!) !=
-                                                                  null &&
-                                                              getOrdetItem(product
-                                                                          .id!)
-                                                                      ?.productCount ==
-                                                                  1
-                                                          ? null
-                                                          : () {
-                                                              getOrdetItem(product
-                                                                              .id!) !=
-                                                                          null &&
-                                                                      getOrdetItem(product.id!)
-                                                                              ?.productCount ==
-                                                                          1
-                                                                  ? null
-                                                                  : () {
-                                                                      var orderItem =
-                                                                          getOrdetItem(
-                                                                              product.id!);
+                                      subtitle: getOrdetItem(product.id!) ==
+                                              null
+                                          ? null
+                                          : Row(
+                                              children: [
+                                                IconButton(
+                                                  icon:
+                                                      const Icon(Icons.remove),
+                                                  onPressed: getOrdetItem(
+                                                                  product
+                                                                      .id!) !=
+                                                              null &&
+                                                          getOrdetItem(product
+                                                                      .id!)
+                                                                  ?.productCount ==
+                                                              1
+                                                      ? null
+                                                      : () {
+                                                          var orderItem =
+                                                              getOrdetItem(
+                                                                  product.id!);
 
-                                                                      orderItem
-                                                                              ?.productCount =
-                                                                          (orderItem.productCount ?? 0) -
-                                                                              1;
-                                                                      setStateEx(
-                                                                          () {});
-                                                                    };
-                                                            },
-                                                    ),
-                                                    Text(getOrdetItem(
-                                                            product.id!)!
-                                                        .productCount
-                                                        .toString()),
-                                                    IconButton(
-                                                      icon:
-                                                          const Icon(Icons.add),
-                                                      onPressed: () {
-                                                        var orderItem =
-                                                            getOrdetItem(
-                                                                product.id!);
-
-                                                        if ((orderItem
-                                                                    ?.productCount ??
-                                                                0) <
-                                                            (product.stock ??
-                                                                0)) {
                                                           orderItem
                                                                   ?.productCount =
                                                               (orderItem.productCount ??
-                                                                      0) +
+                                                                      0) -
                                                                   1;
-                                                        }
-
-                                                        setStateEx(() {});
-                                                      },
-                                                    ),
-                                                  ],
+                                                          setStateEx(() {});
+                                                        },
                                                 ),
+                                                Text(getOrdetItem(product.id!)!
+                                                    .productCount
+                                                    .toString()),
+                                                IconButton(
+                                                  icon: const Icon(Icons.add),
+                                                  onPressed: () {
+                                                    var orderItem =
+                                                        getOrdetItem(
+                                                            product.id!);
+
+                                                    if ((orderItem
+                                                                ?.productCount ??
+                                                            0) <
+                                                        (product.stock ?? 0)) {
+                                                      orderItem?.productCount =
+                                                          (orderItem.productCount ??
+                                                                  0) +
+                                                              1;
+                                                    }
+
+                                                    setStateEx(() {});
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                       trailing: getOrdetItem(product.id!) ==
                                               null
                                           ? IconButton(

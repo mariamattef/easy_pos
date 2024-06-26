@@ -16,7 +16,7 @@ class SqlHelper {
       } else {
         db = await openDatabase(
           'pos.db',
-          version: 1,
+          version: 2,
           onCreate: (db, version) {
             print('database created successfully');
           },
@@ -108,20 +108,21 @@ class SqlHelper {
     }
   }
 
-  Future<void> initBackUpDb() async {
-    String databasePath = await getDatabasesPath();
-    String dbPath = join(databasePath, 'pos.db');
+  Future<void> createBackup() async {
+    try {
+      String databasesPath = await getDatabasesPath();
+      String dbPath = join(databasesPath, 'pos.db');
 
-    Future<void> createBackup(String backupPath) async {
-      try {
-        await db!.close(); // Close the current database connection
-        await File(backupPath)
-            .writeAsBytes(await File(dbPath).readAsBytes()); // Create backup
-        db = await openDatabase(dbPath); // Reopen the database
-        print('Database backup created successfully');
-      } catch (e) {
-        print('Error in creating database backup: $e');
-      }
+      String backupPath = join(databasesPath, 'pos_backup.db');
+
+      print(dbPath);
+
+      await File(backupPath)
+          .writeAsBytes(await File(dbPath).readAsBytes()); // Create backup
+      print(backupPath);
+      print('Database backup created successfully');
+    } catch (e) {
+      print('Error in creating database backup: $e');
     }
   }
 }

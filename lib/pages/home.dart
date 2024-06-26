@@ -1,5 +1,6 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/models/exchange_rate.dart';
+import 'package:easy_pos/models/order_model.dart';
 import 'package:easy_pos/pages/all_sales.dart';
 import 'package:easy_pos/pages/categories.dart';
 import 'package:easy_pos/pages/clients.dart';
@@ -28,7 +29,49 @@ class _HomePageState extends State<HomePage> {
     // initializeBackUpDb();
     getRate();
     getExchangeRate();
+    getOrders();
     super.initState();
+  }
+
+  List<OrderModel>? orders;
+  double todaySales = 0;
+
+  void getOrders() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.rawQuery("""
+      select O.* ,C.name as clientName,C.phone as clientPhone,C.address as clientAddress
+      from orders O
+      inner join clients C
+      where O.clientId = C.id
+      """);
+
+      if (data.isNotEmpty) {
+        orders = [];
+        for (var item in data) {
+          orders!.add(OrderModel.freomJson(item));
+        }
+      } else {
+        orders = [];
+      }
+    } catch (e) {
+      print('Error In get data from orders $e');
+      orders = [];
+    }
+    calcTodaysSales(orders!);
+    setState(() {});
+  }
+
+  void calcTodaysSales(List<OrderModel> orders) {
+    todaySales = 0;
+    for (var order in orders) {
+      // if createdAt is the same as DateTime.now() day
+      DateTime orderDate = DateTime.parse(order.createdAt!);
+      if (orderDate.day == DateTime.now().day) {
+        todaySales += order.totalPrice!;
+      }
+    }
+    setState(() {});
   }
 
   void intilizeTables() async {
@@ -40,7 +83,7 @@ class _HomePageState extends State<HomePage> {
 
   void initializeBackUpDb() async {
     var sqlHelper = GetIt.I.get<SqlHelper>();
-    await sqlHelper.initBackUpDb();
+    await sqlHelper.createBackup();
     setState(() {});
   }
 
@@ -50,12 +93,10 @@ class _HomePageState extends State<HomePage> {
       var data = await sqlHelper.db!.query('exchangerate');
 
       if (data.isNotEmpty) {
+        exchangeRate = [];
         for (var item in data) {
-          exchangeRate = [];
           exchangeRate!.add(ExchangeRateModel.fromJson(item));
         }
-      } else {
-        exchangeRate = [];
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -122,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                               '${exchangeRate![0].currencyegp} EGP = ${exchangeRate![0].currencyusd} USD',
                             )
                           : HeaderItem('Exchanged Rate ', 'N/A'),
-                      HeaderItem('Today\'s Sales ', '1000 EGP'),
+                      HeaderItem('Today\'s Sales ', '$todaySales EGP'),
                     ],
                   ),
                 ),

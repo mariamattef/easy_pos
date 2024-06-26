@@ -1,7 +1,7 @@
 class ExchangeRateModel {
   int? id;
-  int? currencyusd;
-  int? currencyegp;
+  double? currencyusd;
+  double? currencyegp;
   ExchangeRateModel.fromJson(Map<String, dynamic> data) {
     id = data['id'];
     currencyusd = data['currencyusd'];
