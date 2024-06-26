@@ -66,7 +66,7 @@ class _CategoriesOpePageState extends State<CategoriesOpePage> {
                   onPressed: () async {
                     await onSubmit();
                   },
-                  label: 'Submit')
+                  label: widget.categoryModel != null ? 'Update' : 'Add ')
             ],
           ),
         ),

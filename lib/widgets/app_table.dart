@@ -1,16 +1,18 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:easy_pos/pages/categories.dart';
-import 'package:easy_pos/pages/category_operation.dart';
 import 'package:flutter/material.dart';
 
 class AppTable extends StatelessWidget {
   final List<DataColumn> columns;
   final DataTableSource source;
   final double minWidth;
+  final bool? sortAscending;
+  final int? sortColumnIndex;
   const AppTable(
       {required this.columns,
       required this.source,
       this.minWidth = 600,
+      this.sortAscending,
+      this.sortColumnIndex,
       super.key});
 
   @override
@@ -31,7 +33,10 @@ class AppTable extends StatelessWidget {
       headingRowHeight: 50,
       horizontalMargin: 20,
       columnSpacing: 20,
+      sortAscending: sortAscending ?? true,
+      sortColumnIndex: sortColumnIndex ?? 0,
       // dataRowHeight: 50,
+
       headingRowColor:
           MaterialStateProperty.all(Theme.of(context).primaryColor),
       headingTextStyle: const TextStyle(fontSize: 18, color: Colors.white),

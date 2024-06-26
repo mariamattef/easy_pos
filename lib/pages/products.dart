@@ -1,7 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/models/products_model.dart';
-import 'package:easy_pos/pages/categories.dart';
 import 'package:easy_pos/pages/product_operation.dart';
 import 'package:easy_pos/widgets/app_table.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,8 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
-  List<ProductModel>? products;
+  List<ProductModel>? product;
+  bool sortAscending = true;
   @override
   void initState() {
     getProducts();
@@ -26,25 +26,25 @@ class _ProductsPageState extends State<ProductsPage> {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
       var data = await sqlHelper.db!.rawQuery('''
-      select P.* C.name as CategoryName,C.description as CategoryDes from products P
+      select P.* ,C.name as categoryName,C.description as categoryDes from products P
       inner join categories C 
       where P.categoryId = C.id
       ''');
 
       if (data.isNotEmpty) {
-        products = [];
+        product = [];
         for (var item in data) {
-          products!.add(ProductModel.freomJson(item));
+          product!.add(ProductModel.fromJson(item));
         }
       } else {
-        products = [];
+        product = [];
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
-        content: Text('Failed to get categories :  $e'),
+        content: Text('Failed to get products :  $e'),
       ));
-      products = [];
+      product = [];
     }
     setState(() {});
   }
@@ -79,9 +79,11 @@ class _ProductsPageState extends State<ProductsPage> {
                 child: TextField(
                   onChanged: (value) async {
                     var sqlHelper = GetIt.I.get<SqlHelper>();
-                    await sqlHelper.db!.rawQuery(
-                        'select * from products where name like ? ',
-                        ['%$value%']);
+                    var result = await sqlHelper.db!.rawQuery("""
+                    SELECT * FROM products
+                    WHERE name LIKE '%$value%' OR description LIKE '%$value%' OR price LIKE '%$value%'
+                  """);
+                    print('Search >>> $result');
                   },
                   decoration: InputDecoration(
                       labelText: 'Search',
@@ -96,34 +98,50 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
               Expanded(
                   child: AppTable(
-                minWidth: 1200,
-                columns: const [
-                  DataColumn2(label: Text('Id')),
-                  DataColumn2(label: Text('Name')),
-                  DataColumn2(label: Text('Description')),
-                  DataColumn2(label: Text('Price')),
-                  DataColumn2(label: Text('Stock')),
-                  DataColumn2(label: Text('Image')),
-                  DataColumn2(label: Text('CategoryId')),
-                  DataColumn2(label: Text('CategoryName')),
-                  DataColumn2(label: Text('CategoryDes')),
-                  DataColumn2(label: Center(child: Text('Actions'))),
+                sortColumnIndex: 10,
+                sortAscending: sortAscending,
+                minWidth: 1400,
+                columns: [
+                  const DataColumn2(label: Text('Id')),
+                  const DataColumn2(label: Text('Name')),
+                  const DataColumn2(label: Text('Description')),
+                  const DataColumn2(label: Text('Price')),
+                  const DataColumn2(label: Text('Stock')),
+                  const DataColumn2(label: Text('isAvaliable')),
+                  const DataColumn2(label: Center(child: Text('Image'))),
+                  const DataColumn2(label: Text('CategoryId')),
+                  const DataColumn2(label: Text('CategoryName')),
+                  const DataColumn2(label: Text('CategoryDes')),
+                  DataColumn2(
+                    label: const Center(child: Text('Actions')),
+                    onSort: (columnIndex, ascending) {
+                      sortAscending = ascending;
+                      product!.sort((a, b) {
+                        if (sortAscending) {
+                          return a.price!.compareTo(b.price!);
+                        } else {
+                          return b.price!.compareTo(a.price!);
+                        }
+                      });
+                      setState(() {});
+                    },
+                  ),
                 ],
                 source: ProductsSourse(
-                  productsEx: products,
-                  onUpdate: (ProductModel) async {
-                    // var result = await Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => CategoriesOpePage(
-                    //               proProductModel: ProductModel,
-                    //             )));
-                    // if (result ?? false) {
-                    //   getProducts();
-                    // }
+                  productEx: product,
+                  onUpdate: (productmodel) async {
+                    var result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProductOperationPage(
+                                  productMod: productmodel,
+                                )));
+                    if (result ?? false) {
+                      getProducts();
+                    }
                   },
-                  onDelete: (ProductModel) {
-                    onDeleteRow(ProductModel.id!);
+                  onDelete: (productmodel) {
+                    onDeleteRow(productmodel.id!);
                   },
                 ),
               )),
@@ -170,36 +188,43 @@ class _ProductsPageState extends State<ProductsPage> {
 }
 
 class ProductsSourse extends DataTableSource {
-  List<ProductModel>? productsEx;
+  List<ProductModel>? productEx;
   void Function(ProductModel) onUpdate;
   void Function(ProductModel) onDelete;
   ProductsSourse(
-      {this.productsEx, required this.onDelete, required this.onUpdate});
+      {required this.productEx,
+      required this.onDelete,
+      required this.onUpdate});
   @override
   DataRow? getRow(int index) {
     return DataRow2(cells: [
-      DataCell(Text('${productsEx?[index].id}')),
-      DataCell(Text('${productsEx?[index].name}')),
-      DataCell(Text('${productsEx?[index].description}')),
-      DataCell(Text('${productsEx?[index].price}')),
-      DataCell(Text('${productsEx?[index].stock}')),
-      DataCell(Text('${productsEx?[index].isAvaliable}')),
-      DataCell(Text('${productsEx?[index].image}')),
-      DataCell(Text('${productsEx?[index].categoryId}')),
-      DataCell(Text('${productsEx?[index].categoryName}')),
-      DataCell(Text('${productsEx?[index].categoryDes}')),
+      DataCell(Text('${productEx?[index].id}')),
+      DataCell(Text('${productEx?[index].name}')),
+      DataCell(Text('${productEx?[index].description}')),
+      DataCell(Text('${productEx?[index].price}')),
+      DataCell(Text('${productEx?[index].stock}')),
+      DataCell(Text('${productEx?[index].isAvaliable}')),
+      DataCell(Center(
+        child: Image.network(
+          '${productEx?[index].image}',
+          fit: BoxFit.contain,
+        ),
+      )),
+      DataCell(Text('${productEx?[index].categoryId}')),
+      DataCell(Text('${productEx?[index].categoryName}')),
+      DataCell(Text('${productEx?[index].categoryDes}')),
       DataCell(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
             onPressed: () {
-              onUpdate.call(productsEx![index]);
+              onUpdate.call(productEx![index]);
             },
             icon: const Icon(Icons.edit),
           ),
           IconButton(
             onPressed: () {
-              onDelete.call(productsEx![index]);
+              onDelete.call(productEx![index]);
             },
             icon: const Icon(
               Icons.delete,
@@ -215,7 +240,7 @@ class ProductsSourse extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => productsEx?.length ?? 0;
+  int get rowCount => productEx?.length ?? 0;
 
   @override
   int get selectedRowCount => 0;

@@ -1,35 +1,36 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/pages/home.dart';
-import 'package:easy_pos/pages/test.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 void main() async {
-  //  بتأكد ان الفلاتر عرف كل الودجت بتاعتة الاول قبل اي حاجة ليها علاقة بالداتا بيز
+  //  بتأكد ان الفلاتر عرف كل الودجت بتاعتة الاول قبل اي حاجة ليه ا علاقة بالداتا بيز
   WidgetsFlutterBinding.ensureInitialized();
+
   var sqlHelper = SqlHelper();
   await sqlHelper.init();
   if (sqlHelper.db != null) {
-    GetIt.I.registerSingleton<SqlHelper>(sqlHelper);
+    GetIt.I.registerSingleton(sqlHelper);
   }
-  runApp(MyApp());
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Easy POS',
+      title: 'Easy Pos',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xff0057da), foregroundColor: Colors.white),
         colorScheme: ColorScheme.fromSwatch(
           errorColor: Colors.red,
           cardColor: Colors.blue.shade100,
           backgroundColor: Colors.white,
-          primarySwatch: getMaterialColor(Color(0xff0057da)),
+          primarySwatch: getMaterialColor(const Color(0xff0057da)),
         ),
         useMaterial3: true,
       ),
@@ -58,3 +59,6 @@ class MyApp extends StatelessWidget {
     return MaterialColor(color.value, shades);
   }
 }
+
+
+// https://www.tutorialspoint.com/sqlite/sqlite_order_by.htm

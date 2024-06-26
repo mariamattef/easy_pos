@@ -5,7 +5,6 @@ import 'package:easy_pos/widgets/app_table.dart';
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:get_it/get_it.dart';
-// import 'package:sqflite/sqflite.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -16,6 +15,7 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
   List<CategoryModel>? categories;
+  bool sortAscending = true;
   @override
   void initState() {
     getCategories();
@@ -75,9 +75,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 child: TextField(
                   onChanged: (value) async {
                     var sqlHelper = GetIt.I.get<SqlHelper>();
-                    var data = await sqlHelper.db!.rawQuery(
-                        'select * from categories where name like ? ',
-                        ['%$value%']);
+                    var data = await sqlHelper.db!.rawQuery("""
+                       SELECT * FROM categories
+                       WHERE name LIKE '%$value%' OR description LIKE '%$value%';
+                      """);
                     print('data >>> $data');
                   },
                   decoration: InputDecoration(
@@ -93,11 +94,31 @@ class _CategoriesPageState extends State<CategoriesPage> {
               ),
               Expanded(
                   child: AppTable(
-                columns: const [
-                  DataColumn2(label: Text('Id')),
-                  DataColumn2(label: Text('Name')),
-                  DataColumn2(label: Text('Description')),
-                  DataColumn2(label: Center(child: Text('Actions'))),
+                sortColumnIndex: 3,
+                sortAscending: sortAscending,
+                minWidth: 700,
+                columns: [
+                  const DataColumn2(label: Text('Id')),
+                  const DataColumn2(
+                    label: Text('Name'),
+                  ),
+                  const DataColumn2(label: Text('Description')),
+                  DataColumn2(
+                    label: const Center(
+                      child: Text('Actions'),
+                    ),
+                    onSort: (columnIndex, ascending) {
+                      sortAscending = ascending;
+                      categories!.sort((a, b) {
+                        if (sortAscending) {
+                          return a.name!.compareTo(b.name!);
+                        } else {
+                          return b.name!.compareTo(a.name!);
+                        }
+                      });
+                      setState(() {});
+                    },
+                  ),
                 ],
                 source: CategoriesTableSourse(
                   categoriesEx: categories,

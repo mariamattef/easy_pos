@@ -29,10 +29,10 @@ class GridViewItem extends StatelessWidget {
               radius: 30,
               child: Icon(icon, color: color, size: 40),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),

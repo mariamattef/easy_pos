@@ -1,6 +1,5 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/models/category_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -56,16 +55,30 @@ class _CategoriesDropDownState extends State<CategoriesDropDown> {
             ? const Center(
                 child: Text('No Data Found'),
               )
-            : DropdownButton(
-                hint: Text('select category'),
-                value: widget.selectedValue,
-                items: [
-                  for (var category in categories!)
-                    DropdownMenuItem(
-                      child: Text(category.name ?? 'No name'),
-                      value: category.id,
-                    )
-                ],
-                onChanged: widget.onChanged);
+            : Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.black)),
+                child: DropdownButton(
+                    isExpanded: true,
+                    underline: const SizedBox(),
+                    // ignore: prefer_const_constructors
+                    hint: Text(
+                      'select category',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w400, fontSize: 18),
+                    ),
+                    value: widget.selectedValue,
+                    items: [
+                      for (var category in categories!)
+                        DropdownMenuItem(
+                          value: category.id,
+                          child: Text(category.name ?? 'No name'),
+                        )
+                    ],
+                    onChanged: widget.onChanged),
+              );
   }
 }

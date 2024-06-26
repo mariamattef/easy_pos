@@ -10,13 +10,13 @@ class ProductModel {
   String? categoryName;
   String? categoryDes;
 
-  ProductModel.freomJson(Map<String, dynamic> data) {
+  ProductModel.fromJson(Map<String, dynamic> data) {
     id = data['id'];
     name = data['name'];
     description = data['description'];
     price = data['price'];
     stock = data['stock'];
-    isAvaliable = data['isAvaliable'];
+    isAvaliable = data['isAvaliable'] == 1 ? true : false;
     image = data['image'];
     categoryId = data['categoryId'];
     categoryName = data['categoryName'];

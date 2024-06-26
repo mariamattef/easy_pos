@@ -1,10 +1,14 @@
 import 'package:easy_pos/helper/sql_helper.dart';
+import 'package:easy_pos/models/exchange_rate.dart';
+import 'package:easy_pos/pages/all_sales.dart';
 import 'package:easy_pos/pages/categories.dart';
+import 'package:easy_pos/pages/clients.dart';
+import 'package:easy_pos/pages/sale_operation_page.dart';
 import 'package:easy_pos/pages/products.dart';
+import 'package:easy_pos/pages/all_sale.dart';
 import 'package:easy_pos/widgets/grid_view_item.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,18 +19,51 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isLooding = true;
-  bool isTableInitialize = false;
+  List<ExchangeRateModel>? exchangeRate;
+  bool isLoading = true;
+  bool isTableIntilized = false;
   @override
   void initState() {
-    initilizeTable();
+    intilizeTables();
+    // initializeBackUpDb();
+    getRate();
+    getExchangeRate();
     super.initState();
   }
 
-  void initilizeTable() async {
+  void intilizeTables() async {
     var sqlHelper = GetIt.I.get<SqlHelper>();
-    isTableInitialize = await sqlHelper.createTables();
-    isLooding = false;
+    isTableIntilized = await sqlHelper.createTables();
+    isLoading = false;
+    setState(() {});
+  }
+
+  void initializeBackUpDb() async {
+    var sqlHelper = GetIt.I.get<SqlHelper>();
+    await sqlHelper.initBackUpDb();
+    setState(() {});
+  }
+
+  Future<void> getExchangeRate() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.query('exchangerate');
+
+      if (data.isNotEmpty) {
+        for (var item in data) {
+          exchangeRate = [];
+          exchangeRate!.add(ExchangeRateModel.fromJson(item));
+        }
+      } else {
+        exchangeRate = [];
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Failed to get Rate :  $e'),
+      ));
+      exchangeRate = [];
+    }
     setState(() {});
   }
 
@@ -41,7 +78,8 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 color: Theme.of(context).primaryColor,
-                height: MediaQuery.of(context).size.height / 3.3,
+                height:
+                    MediaQuery.of(context).size.height / 3 + (kIsWeb ? 40 : 0),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -50,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text(
+                          const Text(
                             'Easy Pos',
                             style: TextStyle(
                                 color: Colors.white,
@@ -59,26 +97,31 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
-                            child: isLooding
+                            child: isLoading
                                 ? Transform.scale(
                                     scale: .6,
-                                    child: CircularProgressIndicator(
+                                    child: const CircularProgressIndicator(
                                       color: Colors.white,
                                     ),
                                   )
                                 : CircleAvatar(
                                     radius: 9,
-                                    backgroundColor: isTableInitialize
+                                    backgroundColor: isTableIntilized
                                         ? Colors.green
                                         : Colors.red,
                                   ),
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
-                      HeaderItem('Exchanged Rate ', '1 USD = 50 EGP'),
+                      exchangeRate?.isNotEmpty ?? false
+                          ? HeaderItem(
+                              'Exchanged Rate ',
+                              '${exchangeRate![0].currencyegp} EGP = ${exchangeRate![0].currencyusd} USD',
+                            )
+                          : HeaderItem('Exchanged Rate ', 'N/A'),
                       HeaderItem('Today\'s Sales ', '1000 EGP'),
                     ],
                   ),
@@ -88,8 +131,8 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(20),
-              color: Color(0xfffafafa),
+              padding: const EdgeInsets.all(20),
+              color: const Color(0xfffafafa),
               child: GridView.count(
                 crossAxisCount: 2,
                 mainAxisSpacing: 10,
@@ -99,28 +142,46 @@ class _HomePageState extends State<HomePage> {
                     label: 'All Sales',
                     color: Colors.orange,
                     icon: Icons.calculate,
-                    onPrresed: () {},
+                    onPrresed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const AllSales()));
+                    },
                   ),
                   GridViewItem(
                     label: 'Products',
                     color: Colors.pink,
                     icon: Icons.inventory_2,
                     onPrresed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (ctx) => ProductsPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const ProductsPage()));
                     },
                   ),
                   GridViewItem(
                     label: 'Clients',
                     color: Colors.blue,
                     icon: Icons.groups,
-                    onPrresed: () {},
+                    onPrresed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const ClientsPage()));
+                    },
                   ),
                   GridViewItem(
                     label: 'New Sale',
                     color: Colors.green,
                     icon: Icons.point_of_sale,
-                    onPrresed: () {},
+                    onPrresed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const SaleOperationPage()),
+                      );
+                    },
                   ),
                   GridViewItem(
                     label: 'Categories',
@@ -130,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (ctx) => CategoriesPage()));
+                              builder: (ctx) => const CategoriesPage()));
                     },
                   ),
                 ],
@@ -140,6 +201,21 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Future<void> getRate() async {
+    try {
+      var sqlHelper = GetIt.I.get<SqlHelper>();
+      var data = await sqlHelper.db!.insert('exchangerate', {
+        'currencyusd': 1,
+        'currencyegp': 57.5,
+      });
+      print('>>>>>>>>>>>>>>>>>>>>> insert $data');
+
+      setState(() {});
+    } catch (e) {
+      print('Error in get rate $e');
+    }
   }
 }
 
