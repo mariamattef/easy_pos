@@ -118,11 +118,9 @@ class _HomePageState extends State<HomePage> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 color: Theme.of(context).primaryColor,
-                height:
-                    MediaQuery.of(context).size.height / 3 + (kIsWeb ? 40 : 0),
+                height: MediaQuery.of(context).size.height / 3 + (kIsWeb ? 40 : 0),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -130,10 +128,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           const Text(
                             'Easy Pos',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w800),
+                            style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w800),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
@@ -146,9 +141,7 @@ class _HomePageState extends State<HomePage> {
                                   )
                                 : CircleAvatar(
                                     radius: 9,
-                                    backgroundColor: isTableIntilized
-                                        ? Colors.green
-                                        : Colors.red,
+                                    backgroundColor: isTableIntilized ? Colors.green : Colors.red,
                                   ),
                           )
                         ],
@@ -183,10 +176,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.orange,
                     icon: Icons.calculate,
                     onPrresed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const AllSales()));
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const AllSales()));
                     },
                   ),
                   GridViewItem(
@@ -194,10 +184,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.pink,
                     icon: Icons.inventory_2,
                     onPrresed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const ProductsPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const ProductsPage()));
                     },
                   ),
                   GridViewItem(
@@ -205,10 +192,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.blue,
                     icon: Icons.groups,
                     onPrresed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const ClientsPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const ClientsPage()));
                     },
                   ),
                   GridViewItem(
@@ -218,8 +202,7 @@ class _HomePageState extends State<HomePage> {
                     onPrresed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (ctx) => const SaleOperationPage()),
+                        MaterialPageRoute(builder: (ctx) => const SaleOperationPage()),
                       );
                     },
                   ),
@@ -228,10 +211,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.yellow,
                     icon: Icons.category,
                     onPrresed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const CategoriesPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const CategoriesPage()));
                     },
                   ),
                 ],
@@ -273,10 +253,7 @@ Widget HeaderItem(String label, String value) {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 19,
-                  fontWeight: FontWeight.w800),
+              style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800),
             ),
             Text(
               value,

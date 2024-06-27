@@ -3,6 +3,7 @@ import 'package:easy_pos/models/order_items_model.dart';
 import 'package:easy_pos/models/order_model.dart';
 import 'package:easy_pos/models/products_model.dart';
 import 'package:easy_pos/pages/all_sale.dart';
+import 'package:easy_pos/pages/home.dart';
 import 'package:easy_pos/widgets/app_elevated_button.dart';
 import 'package:easy_pos/widgets/app_form_field.dart';
 
@@ -34,16 +35,13 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
   }
 
   void initPage() {
-    orderLabel = widget.orderModel == null
-        ? '#OR ${DateTime.now().millisecondsSinceEpoch}'
-        : widget.orderModel?.id.toString();
+    orderLabel =
+        widget.orderModel == null ? '#OR ${DateTime.now().millisecondsSinceEpoch}' : widget.orderModel?.id.toString();
 
     selectedClientId = widget.orderModel?.clientId;
 
-    discountController = TextEditingController(
-        text: widget.orderModel == null
-            ? ""
-            : "${widget.orderModel!.discount! * 100}");
+    discountController =
+        TextEditingController(text: widget.orderModel == null ? "" : "${widget.orderModel!.discount! * 100}");
     getProducts();
   }
 
@@ -97,9 +95,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
                           decoration: const BoxDecoration(
-                              color: Color(0xffFFF2CD),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
+                              color: Color(0xffFFF2CD), borderRadius: BorderRadius.all(Radius.circular(5))),
                           width: double.maxFinite,
                           // padding: inputPadding,
 
@@ -165,10 +161,8 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: ListTile(
-                            leading: Image.network(
-                                orderItem.productModel?.image ?? ''),
-                            title: Text(
-                                '${orderItem.productModel?.name ?? ''},${orderItem.productCount}X'),
+                            leading: Image.network(orderItem.productModel?.image ?? ''),
+                            title: Text('${orderItem.productModel?.name ?? ''},${orderItem.productCount}X'),
                             trailing: Container(
                                 padding: const EdgeInsets.all(3),
                                 decoration: BoxDecoration(
@@ -179,8 +173,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                                     color: const Color(0xffF5F5F5),
                                   ),
                                 ),
-                                child: Text(
-                                    '${(orderItem.productCount ?? 0) * (orderItem.productModel?.price ?? 0)}')),
+                                child: Text('${(orderItem.productCount ?? 0) * (orderItem.productModel?.price ?? 0)}')),
                           ),
                         ),
                       Padding(
@@ -189,8 +182,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                           children: [
                             Expanded(
                               child: AppFormField(
-                                Controller: discountController ??
-                                    TextEditingController(),
+                                Controller: discountController ?? TextEditingController(),
                                 label: 'discount',
                                 texInputType: TextInputType.number,
                               ),
@@ -201,15 +193,11 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                             ElevatedButton(
                                 onPressed: () {
                                   var discountValue;
-                                  if ((discountController?.text.isNotEmpty ??
-                                      false)) {
-                                    discountValue =
-                                        (discountController?.text ?? '');
-                                    discount =
-                                        double.parse(discountValue) / 100;
+                                  if ((discountController?.text.isNotEmpty ?? false)) {
+                                    discountValue = (discountController?.text ?? '');
+                                    discount = double.parse(discountValue) / 100;
 
-                                    totalAfterDiscount = calculateTotalPrice -
-                                        (calculateTotalPrice * discount!);
+                                    totalAfterDiscount = calculateTotalPrice - (calculateTotalPrice * discount!);
                                   } else {
                                     discount = 0.0;
                                   }
@@ -250,8 +238,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                   onPressed: () {
                     insertOrder();
                   },
-                  label:
-                      widget.orderModel != null ? 'Update Order' : 'Add Order')
+                  label: widget.orderModel != null ? 'Update Order' : 'Add Order')
             ],
           ),
         ),
@@ -270,7 +257,6 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
               'totalPrice': calculateTotalPrice,
               'discount': discount,
               'clientId': selectedClientId,
-              'createdAt': DateTime.now().toIso8601String(),
             },
             where: 'id =?',
             whereArgs: [widget.orderModel?.id]);
@@ -298,12 +284,10 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
         print('>>>>>> selected order items ids $result');
       }
       setState(() {});
-      Navigator.push(
-          context, MaterialPageRoute(builder: (ctx) => const AllSales()));
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) => const HomePage()), (_) => false);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text('Order Set successfully')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(backgroundColor: Colors.green, content: Text('Order Set successfully')));
       Navigator.pop(context, true);
     }
   }
@@ -311,9 +295,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
   double get calculateTotalPrice {
     double total = 0;
     for (var orderitem in selectOrderItem) {
-      total = total +
-          ((orderitem.productCount ?? 0) *
-              (orderitem.productModel?.price ?? 0));
+      total = total + ((orderitem.productCount ?? 0) * (orderitem.productModel?.price ?? 0));
     }
     return total;
   }
@@ -338,8 +320,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: const Text(
                               'Products',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w600),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
                           ),
                           const SizedBox(
@@ -351,60 +332,34 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                               children: [
                                 for (var product in products!)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                     child: ListTile(
-                                      leading: Image.network(
-                                          product.image ?? 'No image'),
+                                      leading: Image.network(product.image ?? 'No image'),
                                       title: Text(product.name ?? 'No Name'),
-                                      subtitle: getOrdetItem(product.id!) ==
-                                              null
+                                      subtitle: getOrdetItem(product.id!) == null
                                           ? null
                                           : Row(
                                               children: [
                                                 IconButton(
-                                                  icon:
-                                                      const Icon(Icons.remove),
-                                                  onPressed: getOrdetItem(
-                                                                  product
-                                                                      .id!) !=
-                                                              null &&
-                                                          getOrdetItem(product
-                                                                      .id!)
-                                                                  ?.productCount ==
-                                                              1
+                                                  icon: const Icon(Icons.remove),
+                                                  onPressed: getOrdetItem(product.id!) != null &&
+                                                          getOrdetItem(product.id!)?.productCount == 1
                                                       ? null
                                                       : () {
-                                                          var orderItem =
-                                                              getOrdetItem(
-                                                                  product.id!);
+                                                          var orderItem = getOrdetItem(product.id!);
 
-                                                          orderItem
-                                                                  ?.productCount =
-                                                              (orderItem.productCount ??
-                                                                      0) -
-                                                                  1;
+                                                          orderItem?.productCount = (orderItem.productCount ?? 0) - 1;
                                                           setStateEx(() {});
                                                         },
                                                 ),
-                                                Text(getOrdetItem(product.id!)!
-                                                    .productCount
-                                                    .toString()),
+                                                Text(getOrdetItem(product.id!)!.productCount.toString()),
                                                 IconButton(
                                                   icon: const Icon(Icons.add),
                                                   onPressed: () {
-                                                    var orderItem =
-                                                        getOrdetItem(
-                                                            product.id!);
+                                                    var orderItem = getOrdetItem(product.id!);
 
-                                                    if ((orderItem
-                                                                ?.productCount ??
-                                                            0) <
-                                                        (product.stock ?? 0)) {
-                                                      orderItem?.productCount =
-                                                          (orderItem.productCount ??
-                                                                  0) +
-                                                              1;
+                                                    if ((orderItem?.productCount ?? 0) < (product.stock ?? 0)) {
+                                                      orderItem?.productCount = (orderItem.productCount ?? 0) + 1;
                                                     }
 
                                                     setStateEx(() {});
@@ -412,8 +367,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                                                 ),
                                               ],
                                             ),
-                                      trailing: getOrdetItem(product.id!) ==
-                                              null
+                                      trailing: getOrdetItem(product.id!) == null
                                           ? IconButton(
                                               icon: const Icon(Icons.add),
                                               onPressed: () {
