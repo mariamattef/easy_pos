@@ -1,41 +1,23 @@
-// import 'package:easy_pos/helper/sql_helper.dart';
-
-// import '../utils/constants.dart';
-// import '../widgets/clients_drop_down.dart';
-// import '../widgets/dash_line.dart';
-// import '../widgets/discount_textField.dart';
-
-// import '../models/order.dart';
-// import '../models/order_item.dart';
-// import '../widgets/app_button.dart';
+// import 'package:easy_pos_r5/helpers/sql_helper.dart';
+// import 'package:easy_pos_r5/models/order.dart';
+// import 'package:easy_pos_r5/models/order_item.dart';
+// import 'package:easy_pos_r5/models/products.dart';
+// import 'package:easy_pos_r5/widgets/app_elevated_button.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get_it/get_it.dart';
-// import '../helpers/sql_helper.dart';
-// import '../models/product_data.dart';
-// import 'currency_selection.dart';
 
-// class SaleOp extends StatefulWidget {
+// class SaleOpsPage extends StatefulWidget {
 //   final Order? order;
-//   const SaleOp({this.order, super.key});
+//   const SaleOpsPage({this.order, super.key});
 
 //   @override
-//   State<SaleOp> createState() => _SaleOpState();
+//   State<SaleOpsPage> createState() => _SaleOpsPageState();
 // }
 
-// class _SaleOpState extends State<SaleOp> {
+// class _SaleOpsPageState extends State<SaleOpsPage> {
 //   String? orderLabel;
-//   List<ProductData>? products;
+//   List<Product>? products;
 //   List<OrderItem> selectedOrderItem = [];
-//   int? selectedClientId;
-
-//   Currency currentCurrency = Currency.USD; // Default currency is USD in App
-//   Currency selectedCurrency = Currency.EGP;
-
-//   late String currencyText;
-//   late String selectedCurrencyText;
-
-//   late TextEditingController discountController;
-//   double? discount = 0.0;
 
 //   @override
 //   void initState() {
@@ -45,62 +27,25 @@
 
 //   void initPage() {
 //     orderLabel = widget.order == null
-//         ? "#ORDER${DateTime.now().microsecondsSinceEpoch}"
-//         : "${widget.order!.id}";
-//     selectedClientId = widget.order?.clientId;
-//     currencyText = currencyToString(currentCurrency);
-//     selectedCurrencyText = currencyToString(selectedCurrency);
-//     discountController = TextEditingController(
-//         text: widget.order == null ? "" : "${widget.order!.discount! * 100}");
-//     // Initialize selectedOrderItem based on existing order or empty list
-//     if (widget.order != null) {
-//       // If updating existing order, fetch associated OrderItems from database or storage
-//       getOrderItems(widget
-//           .order!.id!); // Assuming orderId can be fetched from widget.order
-//     } else {
-//       // If creating a new order, fetch products
-//       getProducts();
-//     }
-//     setState(() {});
-//   }
-
-//   void getOrderItems(int orderId) async {
-//     try {
-//       var sqlHelper = GetIt.I.get<SqlHelper>();
-//       var data = await sqlHelper.db!.rawQuery("""
-//       select OI.*  
-//       from orderProductItems OI
-//       inner join Products P
-//       where OI.productId = P.id
-//       """);
-
-//       if (data.isNotEmpty) {
-//         selectedOrderItem =
-//             data.map((item) => OrderItem.fromJson(item)).toList();
-//       } else {
-//         selectedOrderItem = [];
-//       }
-//     } catch (e) {
-//       print('Error fetching order items: $e');
-//       selectedOrderItem = [];
-//     }
-//     setState(() {});
+//         ? '#OR${DateTime.now().millisecondsSinceEpoch}'
+//         : widget.order?.id.toString();
+//     getProducts();
 //   }
 
 //   void getProducts() async {
 //     try {
 //       var sqlHelper = GetIt.I.get<SqlHelper>();
 //       var data = await sqlHelper.db!.rawQuery("""
-//       select P.* ,C.name as categoryName,C.description as categoryDescription 
-//       from Products P
-//       inner join Categories C
+//       select P.* ,C.name as categoryName,C.description as categoryDesc 
+//       from products P
+//       inner join categories C
 //       where P.categoryId = C.id
 //       """);
 
 //       if (data.isNotEmpty) {
 //         products = [];
 //         for (var item in data) {
-//           products!.add(ProductData.fromJson(item));
+//           products!.add(Product.fromJson(item));
 //         }
 //       } else {
 //         products = [];
@@ -117,190 +62,103 @@
 //     return Scaffold(
 //       appBar: AppBar(
 //         title: Text(widget.order == null ? 'Add New Sale' : 'Update Sale'),
-//         actions: [
-//           CurrencySelectionScreen(
-//             onCurrencyChanged: (currency) {
-//               currentCurrency = currency;
-//               currencyText = currencyToString(currency);
-//               selectedCurrency == currentCurrency
-//                   ? selectedCurrency = Currency.USD
-//                   : null;
-//               selectedCurrencyText = currencyToString(selectedCurrency);
-//               setState(() {});
-//             },
-//           ),
-//         ],
 //       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             Container(
-//               width: double.maxFinite,
-//               padding: inputPadding,
-//               color: const Color(0xffFFF2CD),
-//               child: Text(
-//                 currencyConvertorLine(currentCurrency),
-//                 style: const TextStyle(
-//                   fontSize: 16,
-//                   fontWeight: FontWeight.w700,
-//                   color: Color(0xffF27D10),
+//       body: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: SingleChildScrollView(
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.stretch,
+//             children: [
+//               Card(
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         'Label : $orderLabel',
+//                         style: const TextStyle(
+//                           fontWeight: FontWeight.w700,
+//                           fontSize: 16,
+//                         ),
+//                       ),
+//                       const SizedBox(
+//                         height: 20,
+//                       ),
+//                       Container(
+//                           color: Colors.red,
+//                           child: Text('TODO: add client drop down here')),
+//                       const SizedBox(
+//                         height: 20,
+//                       ),
+//                       Row(
+//                         children: [
+//                           IconButton(
+//                               onPressed: () {
+//                                 onAddProductClicked();
+//                               },
+//                               icon: Icon(Icons.add)),
+//                           Text(
+//                             'Add Products',
+//                             style: TextStyle(
+//                               fontWeight: FontWeight.w700,
+//                               fontSize: 16,
+//                             ),
+//                           )
+//                         ],
+//                       ),
+//                     ],
+//                   ),
 //                 ),
 //               ),
-//             ),
-//             const SizedBox(height: 20),
-//             Padding(
-//               padding: inputPadding,
-//               child: ClientsDropDown(
-//                 selectedValue: selectedClientId,
-//                 onChange: (clientId) {
-//                   if (clientId != null) {
-//                     selectedClientId = clientId;
-//                     ClientsDropDown.decorationContainer = true;
-//                   } else {
-//                     ClientsDropDown.decorationContainer = false;
-//                   }
-//                   setState(() {});
-//                 },
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             Padding(
-//               padding: inputPadding,
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.stretch,
-//                 children: [
-//                   Card(
-//                     color: const Color(0xffF5F5F5),
-//                     child: Column(
-//                       children: [
-//                         for (var orderItem in selectedOrderItem)
-//                           Padding(
-//                             padding: inputPadding,
-//                             child: ListTile(
-//                               leading: Image.network(
-//                                   orderItem.productData?.image ?? ""),
-//                               title: Text(orderItem.productData?.name ?? ""),
-//                               subtitle: Text(
-//                                   "${convertPrice(orderItem.productData?.price, currencyToString(currentCurrency), currencyToString(selectedCurrency))}\n${(orderItem.productData?.price ?? 0)} $currencyText"),
-//                               trailing: Container(
-//                                 padding: const EdgeInsets.all(3),
-//                                 decoration: BoxDecoration(
-//                                   shape: BoxShape.rectangle,
-//                                   borderRadius: BorderRadius.circular(8),
-//                                   border: Border.all(
-//                                       width: 1, color: iconGrayColor),
-//                                   boxShadow: const [
-//                                     BoxShadow(
-//                                         color: iconGrayColor, blurRadius: 1)
-//                                   ],
-//                                   color: const Color(0xffF5F5F5),
-//                                 ),
-//                                 child: Text(
-//                                   '${(orderItem.productCount ?? 0)}X',
-//                                   style: TextStyle(
-//                                     color: Theme.of(context).primaryColor,
-//                                     fontWeight: FontWeight.w700,
-//                                     fontSize: 15,
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                           ),
-//                         AppButton(
-//                           onPressed: () {
-//                             onClickedAddProduct();
-//                           },
-//                           label: "Add Product",
+//               Card(
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: Column(
+//                     children: [
+//                       Text(
+//                         'Order Items',
+//                         style: TextStyle(
+//                           fontWeight: FontWeight.w700,
+//                           fontSize: 16,
 //                         ),
-//                         const Padding(
-//                           padding: inputPadding,
-//                           child: DashedSeparator(),
-//                         ),
+//                       ),
+//                       for (var orderItem in selectedOrderItem)
 //                         Padding(
-//                           padding: inputPadding,
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               const Text(
-//                                 "Subtotal: ",
-//                                 style: TextStyle(
-//                                   fontWeight: FontWeight.w700,
-//                                   fontSize: 16,
-//                                 ),
-//                               ),
-//                               Text(
-//                                 "${calculateProductPrice()} $currencyText ",
-//                                 style: const TextStyle(
-//                                   fontWeight: FontWeight.w700,
-//                                   fontSize: 16,
-//                                 ),
-//                               ),
-//                             ],
+//                           padding: const EdgeInsets.symmetric(vertical: 5),
+//                           child: ListTile(
+//                             leading:
+//                                 Image.network(orderItem.product?.image ?? ''),
+//                             title: Text(
+//                                 '${orderItem.product?.name ?? ''},${orderItem.productCount}X'),
+//                             trailing: Text(
+//                                 '${(orderItem.productCount ?? 0) * (orderItem.product?.price ?? 0)}'),
 //                           ),
 //                         ),
-//                         const Padding(
-//                           padding: inputPadding,
-//                           child: DashedSeparator(),
+//                       Container(
+//                         color: Colors.red,
+//                         child: Text('TODO: add discount textfield'),
+//                       ),
+//                       Text(
+//                         'Total Price : $calculateTotalPrice',
+//                         style: TextStyle(
+//                           fontWeight: FontWeight.w700,
+//                           fontSize: 16,
 //                         ),
-//                         Padding(
-//                           padding: inputPadding,
-//                           child: DiscountTextField(
-//                             discountController: discountController,
-//                             onChange: (discountValue) {
-//                               if (discountController.text.isNotEmpty) {
-//                                 discountValue = discountController.text;
-//                                 discount = double.parse(discountValue) / 100;
-//                                 DiscountTextField.decorationContainer = true;
-//                               } else {
-//                                 DiscountTextField.decorationContainer = false;
-//                                 discount = 0.0;
-//                               }
-//                               setState(() {});
-//                             },
-//                           ),
-//                         ),
-//                         const Padding(
-//                           padding: inputPadding,
-//                           child: DashedSeparator(),
-//                         ),
-//                         Padding(
-//                           padding: inputPadding,
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               const Text(
-//                                 "Total : ",
-//                                 style: TextStyle(
-//                                   fontWeight: FontWeight.w700,
-//                                   fontSize: 16,
-//                                 ),
-//                               ),
-//                               Text(
-//                                 "${calculateProductPrice(discount)} $currencyText ",
-//                                 style: const TextStyle(
-//                                   fontWeight: FontWeight.w700,
-//                                   fontSize: 16,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ],
-//                     ),
+//                       )
+//                     ],
 //                   ),
-//                 ],
+//                 ),
 //               ),
-//             ),
-//             AppButton(
-//                 onPressed: selectedOrderItem.isEmpty
-//                     ? null
-//                     : () async {
-//                         ClientsDropDown.decorationContainer = false;
-//                         DiscountTextField.decorationContainer = false;
-//                         await onSetOrder();
-//                       },
-//                 label: 'Confirm'),
-//           ],
+//               AppElevatedButton(
+//                   onPressed: selectedOrderItem.isEmpty
+//                       ? null
+//                       : () async {
+//                           await onSetOrder();
+//                         },
+//                   label: 'Add Order')
+//             ],
+//           ),
 //         ),
 //       ),
 //     );
@@ -308,285 +166,178 @@
 
 //   Future<void> onSetOrder() async {
 //     try {
-//       Order newOrder;
-//       if (widget.order != null) {
-//         //update
-//         var sqlHelper = GetIt.I.get<SqlHelper>();
-//         var orderId = await sqlHelper.db!.update(
-//           "Orders",
-//           {
-//             "label": orderLabel,
-//             "totalPrice": calculateProductPrice(),
-//             "discount": discount,
-//             "clientId": selectedClientId
-//           },
-//           where: 'id = ?',
-//           whereArgs: [widget.order?.id],
-//         );
-//         newOrder = Order(
-//           id: orderId,
-//           label: orderLabel,
-//           totalPrice: calculateProductPrice(),
-//           discount: discount,
-//           clientId: selectedClientId,
-//         );
+//       var sqlHelper = GetIt.I.get<SqlHelper>();
 
-//         var batch = sqlHelper.db!.batch();
-//         for (var orderItem in selectedOrderItem) {
-//           batch.update(
-//             'orderProductItems',
-//             {
-//               "orderId": orderId,
-//               "productId": orderItem.productId,
-//               "productCount": orderItem.productCount ?? 0,
-//             },
-//             where: 'id = ?',
-//             whereArgs: [orderId],
-//           );
-//           sqlHelper.backupDatabase();
-//           var result = await batch.commit();
-//           print(">>>>>>>>>>> Update selected order items ids: $result");
-//         }
-//       } else {
-//         var sqlHelper = GetIt.I.get<SqlHelper>();
-//         var orderId = await sqlHelper.db!.insert(
-//           "Orders",
-//           {
-//             "label": orderLabel,
-//             "totalPrice": calculateProductPrice(),
-//             "discount": discount,
-//             "clientId": selectedClientId
-//           },
-//         );
-//         newOrder = Order(
-//           id: orderId,
-//           label: orderLabel,
-//           totalPrice: calculateProductPrice(),
-//           discount: discount,
-//           clientId: selectedClientId,
-//         );
+//       var orderId = await sqlHelper.db!.insert('orders', {
+//         'label': orderLabel,
+//         'totalPrice': calculateTotalPrice,
+//         'discount': 0,
+//         'clientId': 1
+//       });
 
-//         var batch = sqlHelper.db!.batch();
-//         for (var orderItem in selectedOrderItem) {
-//           batch.insert(
-//             'orderProductItems',
-//             {
-//               "orderId": orderId,
-//               "productId": orderItem.productId,
-//               "productCount": orderItem.productCount ?? 0,
-//             },
-//           );
-//           sqlHelper.backupDatabase();
-//           var result = await batch.commit();
-//           print(">>>>>>>>>>> selected order items ids: $result");
-//         }
+//       var batch = sqlHelper.db!.batch();
+//       for (var orderItem in selectedOrderItem) {
+//         batch.insert('orderProductItems', {
+//           'orderId': orderId,
+//           'productId': orderItem.productId,
+//           'productCount': orderItem.productCount ?? 0,
+//         });
 //       }
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//             backgroundColor: Colors.green,
-//             content: Text("Order Set Successfully")),
-//       );
-//       Navigator.pop(context, newOrder);
+
+//       await batch.commit();
+
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//           backgroundColor: Colors.green,
+//           content: Text('Order Set Successfully')));
+//       Navigator.pop(context, true);
 //     } catch (e) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//             backgroundColor: Colors.red,
-//             content: Text("Please Make Sure to Select a Client")),
-//       );
-//       print("Error in Creating Order: $e");
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//           backgroundColor: Colors.red,
+//           content: Text('Error In Create Order : $e')));
 //     }
 //   }
 
-//   double? calculateProductPrice([double? discount]) {
+//   double get calculateTotalPrice {
 //     double total = 0;
-//     discount = discount ?? 0;
-//     double totalNet;
+
 //     for (var orderItem in selectedOrderItem) {
-//       total +=
-//           ((orderItem.productCount ?? 0) * (orderItem.productData?.price ?? 0));
+//       total = total +
+//           ((orderItem.productCount ?? 0) * (orderItem.product?.price ?? 0));
 //     }
-//     if (discount <= 1) {
-//       total -= (total * discount);
-//     }
-//     switch (currentCurrency) {
-//       case Currency.USD:
-//       case Currency.EGP:
-//       case Currency.EUR:
-//         totalNet = double.parse(total.toStringAsFixed(2));
-//         return totalNet;
-//     }
+
+//     return total;
 //   }
 
-//   convertPrice(var price, String fromCurrency, String toCurrency) {
-//     final Map<String, double> exchangeRates = {
-//       'EGPtoUSD': 0.021,
-//       'EGPtoEUR': 0.02,
-//       'USDtoEUR': 0.93,
-//       'EURtoUSD': 1.07,
-//       'USDtoEGP': 47.66,
-//       'EURtoEGP': 51.13,
-//     };
-
-//     // if (fromCurrency == toCurrency) return price;
-//     switch ("${fromCurrency}to$toCurrency") {
-//       case 'EGPtoUSD':
-//         return "${(price * exchangeRates['EGPtoUSD']).toStringAsFixed(4)} $selectedCurrencyText";
-//       case 'EGPtoEUR':
-//         return "${(price * exchangeRates['EGPtoEUR']).toStringAsFixed(4)} $selectedCurrencyText";
-//       case 'USDtoEUR':
-//         return "${(price * exchangeRates['USDtoEUR']).toStringAsFixed(4)} $selectedCurrencyText";
-//       case 'EURtoUSD':
-//         return "${(price * exchangeRates['EURtoUSD']).toStringAsFixed(4)} $selectedCurrencyText";
-//       case 'USDtoEGP':
-//         return "${(price * exchangeRates['USDtoEGP']).toStringAsFixed(4)} $selectedCurrencyText";
-//       case 'EURtoEGP':
-//         return "${(price * exchangeRates['EURtoEGP']).toStringAsFixed(4)} $selectedCurrencyText";
-//       default:
-//         return price;
-//     }
-//   }
-
-//   String currencyToString(Currency currency) {
-//     switch (currency) {
-//       case Currency.EGP:
-//         return 'EGP';
-//       case Currency.EUR:
-//         return 'EUR';
-//       case Currency.USD:
-//         return 'USD';
-//     }
-//   }
-
-//   String currencyConvertorLine(Currency currency) {
-//     switch (currency) {
-//       case Currency.EGP:
-//         return '1 $currencyText = 0.020 EUR || 0.021 USD';
-//       case Currency.EUR:
-//         return '1 $currencyText = 51.1264 EGP ';
-//       case Currency.USD:
-//         return '1 $currencyText = 47.66 EGP ';
-//     }
-//   }
-
-//   void onClickedAddProduct() async {
+//   void onAddProductClicked() async {
 //     await showDialog(
 //         context: context,
 //         builder: (context) {
-//           return StatefulBuilder(builder: (context, setStateDialog) {
+//           return StatefulBuilder(builder: (context, setStateEx) {
 //             return Dialog(
-//               insetPadding: inputPadding,
 //               child: Padding(
-//                 padding: const EdgeInsets.all(8),
-//                 child: ((products?.isEmpty ?? false))
-//                     ? const Center(child: Text("No Data Found"))
+//                 padding: const EdgeInsets.all(14.0),
+//                 child: (products?.isEmpty ?? false)
+//                     ? Center(
+//                         child: Text('No Data Found'),
+//                       )
 //                     : Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
 //                         children: [
-//                           const Text(
-//                             "Products",
+//                           Text(
+//                             'Products',
 //                             style: TextStyle(
 //                               fontWeight: FontWeight.w700,
 //                               fontSize: 16,
 //                             ),
 //                           ),
-//                           const SizedBox(height: 20),
+//                           const SizedBox(
+//                             height: 20,
+//                           ),
 //                           Expanded(
 //                             child: ListView(
 //                               children: [
 //                                 for (var product in products!)
 //                                   Padding(
 //                                     padding: const EdgeInsets.symmetric(
-//                                         vertical: 8.0),
+//                                         vertical: 10),
 //                                     child: ListTile(
-//                                       leading: Image.network(
-//                                           product.image ?? "no image"),
-//                                       title: Text(product.name ?? "no name"),
-//                                       subtitle: getOrderItem(product.id!) ==
-//                                               null
-//                                           ? null
-//                                           : Row(
-//                                               children: [
-//                                                 IconButton(
-//                                                     onPressed: getOrderItem(
-//                                                                     product
-//                                                                         .id!) !=
-//                                                                 null &&
-//                                                             getOrderItem(product
-//                                                                         .id!)
-//                                                                     ?.productCount ==
-//                                                                 1
-//                                                         ? null
-//                                                         : () {
-//                                                             getOrderItem(product
-//                                                                         .id!)
-//                                                                     ?.productCount =
-//                                                                 (getOrderItem(product.id!)
-//                                                                             ?.productCount ??
-//                                                                         0) -
-//                                                                     1;
-//                                                             setStateDialog(
-//                                                                 () {});
-//                                                           },
-//                                                     icon: const Icon(
-//                                                         Icons.remove)),
-//                                                 Text(getOrderItem(product.id!)!
-//                                                     .productCount
-//                                                     .toString()),
-//                                                 IconButton(
-//                                                     onPressed: () {
-//                                                       getOrderItem(product.id!)
-//                                                               ?.productCount =
-//                                                           (getOrderItem(product
+//                                         leading: Image.network(
+//                                             product.image ?? 'No Image'),
+//                                         title: Text(product.name ?? 'No Name'),
+//                                         subtitle: getOrderItem(product.id!) ==
+//                                                 null
+//                                             ? null
+//                                             : Row(
+//                                                 children: [
+//                                                   IconButton(
+//                                                       onPressed: getOrderItem(
+//                                                                       product
+//                                                                           .id!) !=
+//                                                                   null &&
+//                                                               getOrderItem(product
 //                                                                           .id!)
-//                                                                       ?.productCount ??
-//                                                                   0) +
-//                                                               1;
-//                                                       setStateDialog(() {});
+//                                                                       ?.productCount ==
+//                                                                   1
+//                                                           ? null
+//                                                           : () {
+//                                                               var orderItem =
+//                                                                   getOrderItem(
+//                                                                       product
+//                                                                           .id!);
+
+//                                                               orderItem
+//                                                                       ?.productCount =
+//                                                                   (orderItem.productCount ??
+//                                                                           0) -
+//                                                                       1;
+//                                                               setStateEx(() {});
+//                                                             },
+//                                                       icon: Icon(Icons.remove)),
+//                                                   Text(
+//                                                       getOrderItem(product.id!)!
+//                                                           .productCount
+//                                                           .toString()),
+//                                                   IconButton(
+//                                                       onPressed: () {
+//                                                         var orderItem =
+//                                                             getOrderItem(
+//                                                                 product.id!);
+
+//                                                         if ((orderItem
+//                                                                     ?.productCount ??
+//                                                                 0) <
+//                                                             (product.stock ??
+//                                                                 0)) {
+//                                                           orderItem
+//                                                                   ?.productCount =
+//                                                               (orderItem.productCount ??
+//                                                                       0) +
+//                                                                   1;
+//                                                         }
+
+//                                                         setStateEx(() {});
+//                                                       },
+//                                                       icon: Icon(Icons.add)),
+//                                                 ],
+//                                               ),
+//                                         trailing:
+//                                             getOrderItem(product.id!) == null
+//                                                 ? IconButton(
+//                                                     onPressed: () {
+//                                                       onAddItem(product);
+//                                                       setStateEx(() {});
 //                                                     },
-//                                                     icon:
-//                                                         const Icon(Icons.add)),
-//                                               ],
-//                                             ),
-//                                       trailing: getOrderItem(product.id!) ==
-//                                               null
-//                                           ? IconButton(
-//                                               onPressed: () {
-//                                                 onAddItem(product);
-//                                                 setStateDialog(() {});
-//                                               },
-//                                               icon: const Icon(Icons.add))
-//                                           : IconButton(
-//                                               onPressed: () {
-//                                                 onDeleteItem(product.id!);
-//                                                 setStateDialog(() {});
-//                                               },
-//                                               icon: const Icon(Icons.delete)),
-//                                     ),
-//                                   ),
+//                                                     icon: Icon(Icons.add))
+//                                                 : IconButton(
+//                                                     onPressed: () {
+//                                                       onDeleteItem(product.id!);
+//                                                       setStateEx(() {});
+//                                                     },
+//                                                     icon: Icon(Icons.delete))),
+//                                   )
 //                               ],
 //                             ),
 //                           ),
-//                           const SizedBox(height: 20),
-//                           AppButton(
+//                           const SizedBox(
+//                             height: 20,
+//                           ),
+//                           AppElevatedButton(
 //                               onPressed: () {
 //                                 Navigator.pop(context);
 //                               },
-//                               label: "Back"),
+//                               label: 'Back')
 //                         ],
 //                       ),
 //               ),
 //             );
 //           });
 //         });
+
 //     setState(() {});
 //   }
 
 //   OrderItem? getOrderItem(int productId) {
 //     for (var item in selectedOrderItem) {
-//       //todo: when the user tap on a receipt it shows the selected products
-//       // if (widget.order != null) {
-//       //   selectedOrderItem = widget.order;
-//       //   return item;
-//       // }
 //       if (item.productId == productId) {
 //         return item;
 //       }
@@ -594,13 +345,13 @@
 //     return null;
 //   }
 
-//   void onAddItem(ProductData product) {
-//     selectedOrderItem.add(OrderItem(
-//         productId: product.id, productCount: 1, productData: product));
+//   void onAddItem(Product product) {
+//     selectedOrderItem.add(
+//         OrderItem(productId: product.id, productCount: 1, product: product));
 //   }
 
 //   void onDeleteItem(int productId) {
-//     for (var i = 0; i < selectedOrderItem.length; i++) {
+//     for (var i = 0; i < (selectedOrderItem.length); i++) {
 //       if (selectedOrderItem[i].productId == productId) {
 //         selectedOrderItem.removeAt(i);
 //         break;

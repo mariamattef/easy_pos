@@ -28,6 +28,7 @@ class OrderModel {
     clientId = data['clientId'];
     clientName = data['clientName'];
     clientPhone = data['clientPhone'];
+    clientAddress = data['clientAddress'];
     createdAt = data['createdAt'];
   }
   Map<String, dynamic> toJson() {
@@ -39,6 +40,7 @@ class OrderModel {
       'clientId': clientId,
       'clientName': clientName,
       'clientPhone': clientPhone,
+      'clientAddress': clientAddress,
     };
   }
 

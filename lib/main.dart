@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 void main() async {
-  //  بتأكد ان الفلاتر عرف كل الودجت بتاعتة الاول قبل اي حاجة ليه ا علاقة بالداتا بيز
   WidgetsFlutterBinding.ensureInitialized();
 
   var sqlHelper = SqlHelper();
@@ -59,6 +58,3 @@ class MyApp extends StatelessWidget {
     return MaterialColor(color.value, shades);
   }
 }
-
-
-// https://www.tutorialspoint.com/sqlite/sqlite_order_by.htm

@@ -28,7 +28,7 @@ class _AllSalesPageState extends State<AllSalesPage> {
       var data = await sqlHelper.db!.rawQuery('''
     select O.* ,C.name as clientName,C.phone as clientPhone,C.address as clientAddress
       from Orders O
-      inner join Clients C
+      inner join clients C
       where O.clientId = C.id
       ''');
 

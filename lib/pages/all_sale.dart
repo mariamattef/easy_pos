@@ -3,6 +3,8 @@ import 'package:easy_pos/models/order_items_model.dart';
 import 'package:easy_pos/models/order_model.dart';
 import 'package:easy_pos/models/products_model.dart';
 import 'package:easy_pos/pages/sale_operation_page.dart';
+import 'package:easy_pos/widgets/app_elevated_button.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -53,7 +55,7 @@ class _AllSalesState extends State<AllSales> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: Color(0xffF5F5F5),
       appBar: AppBar(title: const Text("All Sales")),
       body: orders == null
           ? const Center(child: CircularProgressIndicator())
@@ -71,137 +73,155 @@ class _AllSalesState extends State<AllSales> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  GestureDetector(
-                                    //update receipt
-                                    onTapUp: (orderClick) async {
-                                      var result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (ctx) => SaleOperationPage(
-                                                orderModel: order)),
-                                      );
-                                      if (result ?? false) {
-                                        getOrders();
-                                      }
-                                    },
-                                    //delete receipt
-                                    onLongPressEnd: (orderClick) {
-                                      onDeleteRow(order.id!);
-                                    },
-                                    child: Card(
-                                      color: Colors.white,
-                                      surfaceTintColor: Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              width: double.maxFinite,
-                                              padding: const EdgeInsets.all(10),
-                                              color: const Color(0xffFFF2CD),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "Date: ${DateTime.now().day - 1}/${DateTime.now().month}/${DateTime.now().year} ",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Color(0xffF27D10),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "${order.totalPrice} EGP",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Colors.blue,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
+                                  Card(
+                                    color: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: double.maxFinite,
+                                            padding: const EdgeInsets.all(10),
+                                            color: const Color(0xffFFF2CD),
+                                            child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                    "Receipt Name :  ${DateTime.now().hour}:${DateTime.now().minute}  PM"),
-                                                IconButton(
-                                                    onPressed: () {},
-                                                    icon: const Icon(Icons
-                                                        .more_vert_rounded)),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              children: [
-                                                const Padding(
-                                                  padding:
-                                                      EdgeInsets.only(right: 5),
-                                                  child: CircleAvatar(
-                                                    radius: 16,
-                                                    child: Icon(Icons.person),
+                                                  "Date: ${DateTime.now().day - 1}/${DateTime.now().month}/${DateTime.now().year} ",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xffF27D10),
                                                   ),
                                                 ),
-                                                Text("${order.clientName}"),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 20),
-                                            const SizedBox(height: 20),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                Text("${order.clientPhone}"),
-                                                //todo: remove the static text
-                                                Text("2 x 20.0 USD"),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                        "Subtotal : ${order.totalPrice} USD"),
-                                                    Text(
-                                                        "Discount : ${order.discount! * 100} %"),
-                                                  ],
+                                                Text(
+                                                  "${order.totalPrice} EGP",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.blue,
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 20),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            const SizedBox(height: 20),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                        "Total: ${calculateProductPriceAfterDiscount(discount: order.discount!, total: order.totalPrice!)}"),
-                                                    const Text("Paid"),
-                                                  ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  "Receipt Name :  ${DateTime.now().hour}:${DateTime.now().minute}  PM"),
+                                              IconButton(
+                                                  onPressed: () {},
+                                                  icon: const Icon(
+                                                      Icons.more_vert_rounded)),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 5),
+                                                child: CircleAvatar(
+                                                  radius: 16,
+                                                  child: Icon(Icons.person),
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 20),
-                                          ],
-                                        ),
+                                              ),
+                                              Text("${order.clientName}"),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 20),
+                                          const SizedBox(height: 20),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Text("${order.clientPhone}"),
+                                              //todo: remove the static text
+                                              Text("${order.clientAddress}"),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                      "Subtotal : ${order.totalPrice} EGP"),
+                                                  Text(
+                                                      "Discount : ${order.discount! * 100} %"),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 20),
+                                          // const SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                      "Total: ${calculateProductPriceAfterDiscount(discount: order.discount!, total: order.totalPrice!)}"),
+                                                ],
+                                              ),
+                                              const Text("Paid"),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 20),
+
+                                          Row(
+                                            children: [
+                                              AppElevatedButton(
+                                                fixedSize: Size(150, 20),
+                                                onPressed: () async {
+                                                  var result =
+                                                      await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (ctx) =>
+                                                            SaleOperationPage(
+                                                                orderModel:
+                                                                    order)),
+                                                  );
+                                                  if (result ?? false) {
+                                                    getOrders();
+                                                  }
+                                                },
+                                                label: 'Edit',
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5)),
+                                                width: 50,
+                                                height: 40,
+                                                child: IconButton(
+                                                  onPressed: () {
+                                                    onDeleteorder(
+                                                        order.id ?? 0);
+                                                  },
+                                                  icon: Icon(Icons.delete),
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -221,28 +241,15 @@ class _AllSalesState extends State<AllSales> {
     return (total - (total * discount));
   }
 
-  convertPrice(var price, String fromCurrency, String toCurrency) {
-    final Map<String, double> exchangeRates = {
-      'EGPtoUSD': 0.021,
-      'EGPtoEUR': 0.02,
-      'USDtoEUR': 0.93,
-      'EURtoUSD': 1.07,
-      'USDtoEGP': 47.66,
-      'EURtoEGP': 51.13,
-    };
-
-    // if (fromCurrency == toCurrency) return price;
-  }
-
-  Future<void> onDeleteRow(int id) async {
+  Future<void> onDeleteorder(int id) async {
     try {
       var dialogResult = await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(
+            title: Text(
               "Delete Receipt",
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
             content:
                 const Text("Are you sure you want to delete this receipt?"),
@@ -251,9 +258,9 @@ class _AllSalesState extends State<AllSales> {
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  child: const Text(
+                  child: Text(
                     'Cancel',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   )),
               TextButton(
                   onPressed: () {
@@ -271,23 +278,17 @@ class _AllSalesState extends State<AllSales> {
           where: "id = ?",
           whereArgs: [id],
         );
-        // sqlHelper.backupDatabase();
-        // if (result > 0) {
-        //   getOrders();
-        //   setState(() {});
-        // }
+
         if (result > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Order deleted successfully")),
           );
-          getOrders(); // Refresh the list after deletion
+          getOrders();
         }
-        print(">>>>>>>>>>> selected order & orderItem are deleted : $result");
+        print(">>> selected order & orderItem are deleted : $result");
       }
     } catch (e) {
       print('Error in delete Receipt: $e');
     }
   }
 }
-
-class Currency {}

@@ -1,7 +1,6 @@
 import 'package:easy_pos/helper/sql_helper.dart';
 import 'package:easy_pos/models/exchange_rate.dart';
 import 'package:easy_pos/models/order_model.dart';
-import 'package:easy_pos/pages/all_sales.dart';
 import 'package:easy_pos/pages/categories.dart';
 import 'package:easy_pos/pages/clients.dart';
 import 'package:easy_pos/pages/sale_operation_page.dart';
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       // if createdAt is the same as DateTime.now() day
       DateTime orderDate = DateTime.parse(order.createdAt!);
       if (orderDate.day == DateTime.now().day) {
-        todaySales += order.totalPrice!;
+        todaySales = todaySales + order.totalPrice!;
       }
     }
     setState(() {});
@@ -251,7 +250,7 @@ class _HomePageState extends State<HomePage> {
         'currencyusd': 1,
         'currencyegp': 57.5,
       });
-      print('>>>>>>>>>>>>>>>>>>>>> insert $data');
+      print('>>>>>> insert $data');
 
       setState(() {});
     } catch (e) {

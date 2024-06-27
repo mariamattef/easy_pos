@@ -1,14 +1,13 @@
 import 'package:easy_pos/helper/sql_helper.dart';
-import 'package:easy_pos/models/exchange_rate.dart';
 import 'package:easy_pos/models/order_items_model.dart';
 import 'package:easy_pos/models/order_model.dart';
 import 'package:easy_pos/models/products_model.dart';
+import 'package:easy_pos/pages/all_sale.dart';
 import 'package:easy_pos/widgets/app_elevated_button.dart';
 import 'package:easy_pos/widgets/app_form_field.dart';
 
 import 'package:easy_pos/widgets/client_drop_down.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 class SaleOperationPage extends StatefulWidget {
@@ -26,12 +25,6 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
   int? selectedClientId;
   TextEditingController? discountController;
   double? totalAfterDiscount;
-
-  //  ExchangeRateModel currentCurrency = Currency.USD; // Default currency is USD in App
-  // ExchangeRateModel selectedCurrency = Currency.EGP;
-
-  // late String currencyText;
-  // late String selectedCurrencyText;
 
   double? discount = 0.0;
   @override
@@ -103,8 +96,8 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          decoration: BoxDecoration(
-                              color: const Color(0xffFFF2CD),
+                          decoration: const BoxDecoration(
+                              color: Color(0xffFFF2CD),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5))),
                           width: double.maxFinite,
@@ -227,7 +220,7 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -254,12 +247,11 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                 ),
               ),
               AppElevatedButton(
-                  onPressed: selectOrderItem.isEmpty
-                      ? null
-                      : () {
-                          insetOrder();
-                        },
-                  label: 'Add Order')
+                  onPressed: () {
+                    insertOrder();
+                  },
+                  label:
+                      widget.orderModel != null ? 'Update Order' : 'Add Order')
             ],
           ),
         ),
@@ -267,36 +259,52 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
     );
   }
 
-  Future<void> insetOrder() async {
+  Future<void> insertOrder() async {
     try {
       var sqlHelper = GetIt.I.get<SqlHelper>();
-      var orderId = await sqlHelper.db!.insert('orders', {
-        'label': orderLabel,
-        'totalPrice': calculateTotalPrice,
-        'discount': discount,
-        'clientId': selectedClientId,
-        'createdAt': DateTime.now().toIso8601String(),
-      });
+      if (widget.orderModel != null) {
+        await sqlHelper.db!.update(
+            'orders',
+            {
+              'label': orderLabel,
+              'totalPrice': calculateTotalPrice,
+              'discount': discount,
+              'clientId': selectedClientId,
+              'createdAt': DateTime.now().toIso8601String(),
+            },
+            where: 'id =?',
+            whereArgs: [widget.orderModel?.id]);
 
-      var batch = sqlHelper.db!.batch();
-      for (var orderItem in selectOrderItem) {
-        batch.insert('orderProductItems', {
-          'orderId': orderItem.orderId,
-          'productCount': orderItem.productId,
-          'productId': orderItem.productCount ?? 0,
+        Navigator.pop(context);
+      } else {
+        var orderId = await sqlHelper.db!.insert('orders', {
+          'label': orderLabel,
+          'totalPrice': calculateTotalPrice,
+          'discount': discount,
+          'clientId': selectedClientId,
+          'createdAt': DateTime.now().toIso8601String(),
         });
+
+        var batch = sqlHelper.db!.batch();
+        for (var orderItem in selectOrderItem) {
+          batch.insert('orderProductItems', {
+            'orderId': orderItem.orderId,
+            'productCount': orderItem.productId,
+            'productId': orderItem.productCount ?? 0,
+          });
+        }
+        var result = await batch.commit();
+
+        print('>>>>>> selected order items ids $result');
       }
-      var result = await batch.commit();
-      print('>>>>>>>>>>>> selected order items ids $result');
+      setState(() {});
+      Navigator.push(
+          context, MaterialPageRoute(builder: (ctx) => const AllSales()));
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Order Set successfully')));
       Navigator.pop(context, true);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        content: Text('Failed to add order :  $e'),
-      ));
     }
   }
 
@@ -422,13 +430,13 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                                             ),
                                     ),
                                   ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Padding(

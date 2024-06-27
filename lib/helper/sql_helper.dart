@@ -77,6 +77,7 @@ class SqlHelper {
           totalPrice real,
           discount real,
           clientId integer not null,
+          createdAt text ,
           foreign key(clientId) references clients(id)
           on delete restrict
           ) 
@@ -107,6 +108,7 @@ class SqlHelper {
       return false;
     }
   }
+  // back Up dataBase
 
   Future<void> createBackup() async {
     try {

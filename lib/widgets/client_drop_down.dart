@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 class ClientDropDown extends StatefulWidget {
   final int? selectedValue;
   final void Function(int?)? onChanged;
-
   const ClientDropDown(
       {required this.onChanged, this.selectedValue, super.key});
 
@@ -48,6 +47,7 @@ class _CategoriesDropDownState extends State<ClientDropDown> {
 
   @override
   Widget build(BuildContext context) {
+    var onValidator;
     return clients == null
         ? const Center(
             child: CircularProgressIndicator(),
@@ -63,8 +63,9 @@ class _CategoriesDropDownState extends State<ClientDropDown> {
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.black)),
                 child: DropdownButton(
-                    isExpanded: true,
                     underline: const SizedBox(),
+                    isExpanded: true,
+                    // underline: const SizedBox(),
                     // ignore: prefer_const_constructors
                     hint: Text(
                       'select client',
