@@ -50,7 +50,8 @@ class _ProductsOperationPageState extends State<ProductOperationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productMod != null ? 'Update' : 'Add New Sale'),
+        title: Text(
+            widget.productMod != null ? 'Update Product' : 'Add New Product'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),

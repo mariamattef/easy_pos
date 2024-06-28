@@ -82,3 +82,32 @@ class _CategoriesDropDownState extends State<CategoriesDropDown> {
               );
   }
 }
+
+
+
+
+// Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//       decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(5),
+//           border: Border.all(color: Colors.black)),
+//       child: DropdownButton(
+//           isExpanded: true,
+//           underline: const SizedBox(),
+//           // ignore: prefer_const_constructors
+//           hint: Text(
+//             'select category',
+//             style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18),
+//           ),
+//           value: widget.selectedValue,
+//           items: [
+//             for (var category in categories!)
+//               DropdownMenuItem(
+//                 value: category.id,
+//                 child: Text(category.name ?? 'No name'),
+//               )
+//           ],
+//           onChanged: widget.onChanged),
+//     );
+//   }
+// }

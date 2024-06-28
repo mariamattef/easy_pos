@@ -55,7 +55,7 @@ class _AllSalesState extends State<AllSales> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF5F5F5),
+      backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(title: const Text("All Sales")),
       body: orders == null
           ? const Center(child: CircularProgressIndicator())
@@ -113,7 +113,7 @@ class _AllSalesState extends State<AllSales> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                  "Receipt Name :  ${DateTime.now().hour}:${DateTime.now().minute}  PM"),
+                                                  "Receipt Name : \n ${order.label}  "),
                                               IconButton(
                                                   onPressed: () {},
                                                   icon: const Icon(
@@ -182,42 +182,30 @@ class _AllSalesState extends State<AllSales> {
 
                                           Row(
                                             children: [
-                                              AppElevatedButton(
-                                                fixedSize: Size(150, 20),
-                                                onPressed: () async {
-                                                  var result =
-                                                      await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (ctx) =>
-                                                            SaleOperationPage(
-                                                                orderModel:
-                                                                    order)),
-                                                  );
-                                                  if (result ?? false) {
-                                                    getOrders();
-                                                  }
-                                                },
-                                                label: 'Edit',
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                width: 50,
-                                                height: 40,
-                                                child: IconButton(
-                                                  onPressed: () {
-                                                    onDeleteorder(
-                                                        order.id ?? 0);
+                                              TextButton(
+                                                  onPressed: () async {
+                                                    var result =
+                                                        await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (ctx) =>
+                                                              SaleOperationPage(
+                                                                  orderModel:
+                                                                      order)),
+                                                    );
+                                                    if (result ?? false) {
+                                                      getOrders();
+                                                    }
                                                   },
-                                                  icon: Icon(Icons.delete),
-                                                  color: Colors.white,
-                                                ),
+                                                  child: const Text('Edit',
+                                                      style: TextStyle(
+                                                          fontSize: 16))),
+                                              IconButton(
+                                                onPressed: () {
+                                                  onDeleteorder(order.id ?? 0);
+                                                },
+                                                icon: const Icon(Icons.delete),
+                                                color: Colors.red,
                                               )
                                             ],
                                           )

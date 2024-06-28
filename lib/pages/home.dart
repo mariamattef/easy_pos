@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     intilizeTables();
-    // initializeBackUpDb();
     getRate();
     getExchangeRate();
     getOrders();
@@ -110,7 +109,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Container(),
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              calcTodaysSales(orders!);
+            },
+            icon: const Icon(Icons.point_of_sale),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Row(

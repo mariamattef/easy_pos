@@ -198,24 +198,26 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
                             const SizedBox(
                               width: 10,
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  var discountValue;
-                                  if ((discountController?.text.isNotEmpty ??
-                                      false)) {
-                                    discountValue =
-                                        (discountController?.text ?? '');
-                                    discount =
-                                        double.parse(discountValue) / 100;
+                            AppElevatedButton(
+                              fontSize: 11,
+                              fixedSize: Size(70, 60),
+                              onPressed: () {
+                                var discountValue;
+                                if ((discountController?.text.isNotEmpty ??
+                                    false)) {
+                                  discountValue =
+                                      (discountController?.text ?? '');
+                                  discount = double.parse(discountValue) / 100;
 
-                                    totalAfterDiscount = calculateTotalPrice -
-                                        (calculateTotalPrice * discount!);
-                                  } else {
-                                    discount = 0.0;
-                                  }
-                                  setState(() {});
-                                },
-                                child: const Text('Apply'))
+                                  totalAfterDiscount = calculateTotalPrice -
+                                      (calculateTotalPrice * discount!);
+                                } else {
+                                  discount = 0.0;
+                                }
+                                setState(() {});
+                              },
+                              label: 'Apply',
+                            ),
                           ],
                         ),
                       ),
@@ -292,21 +294,25 @@ class _SaleOperationPageState extends State<SaleOperationPage> {
             'productCount': orderItem.productId,
             'productId': orderItem.productCount ?? 0,
           });
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text('Order Set successfully')));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (ctx) => const AllSales()));
         }
         var result = await batch.commit();
 
         print('>>>>>> selected order items ids $result');
       }
       setState(() {});
-      Navigator.push(
-          context, MaterialPageRoute(builder: (ctx) => const AllSales()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text('Order Set successfully')));
-      Navigator.pop(context, true);
+          backgroundColor: Colors.red, content: Text('Failed Set Order')));
+      // Navigator.pop(context, true);
     }
   }
+  // ملحوظة
+  // الفانكشن شغالة بتضيف New Sale حتا لو جابت red error
 
   double get calculateTotalPrice {
     double total = 0;

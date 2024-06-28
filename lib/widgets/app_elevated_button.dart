@@ -5,18 +5,20 @@ class AppElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
   final String label;
   final Size? fixedSize;
+  final double? fontSize;
   const AppElevatedButton(
       {this.fixedSize = const Size(double.maxFinite, 50),
       required this.onPressed,
       required this.label,
+      this.fontSize = 16,
       super.key});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(
-            fontSize: 16,
+          textStyle: TextStyle(
+            fontSize: fontSize,
             fontWeight: FontWeight.w800,
           ),
           fixedSize: fixedSize,
